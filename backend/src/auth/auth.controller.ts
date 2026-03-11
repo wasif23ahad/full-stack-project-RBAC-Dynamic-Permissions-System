@@ -6,13 +6,12 @@ import {
   Req,
   HttpCode,
   HttpStatus,
-  UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 const REFRESH_COOKIE = 'refreshToken';
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
@@ -40,13 +39,12 @@ export class AuthController {
   async refresh(@Req() req: Request) {
     const refreshToken = req.cookies[REFRESH_COOKIE] as string | undefined;
     if (!refreshToken) {
-      return { message: 'No refresh token provided' };
+      throw new UnauthorizedException('No refresh token provided');
     }
     return this.authService.refresh(refreshToken);
   }
 
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies[REFRESH_COOKIE] as string | undefined;
