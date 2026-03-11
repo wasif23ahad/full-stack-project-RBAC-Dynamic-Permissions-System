@@ -1,5 +1,4 @@
 # RBAC Dynamic Permissions System
-**Client:** Digital Pylot | **Version:** 2.0 | **Classification:** Confidential
 
 A full-stack web platform where access to every page and action is controlled by atomic permissions assigned at runtime — not hardcoded to roles.
 
@@ -226,14 +225,3 @@ After running `npx prisma db seed`:
 
 ---
 
-## Commit Convention
-
-This project follows a structured commit strategy with a minimum of **15 commits per repository**.
-
-```
-type: short description in present tense
-```
-
-Types: `feat`, `fix`, `chore`, `refactor`, `test`, `style`
-
-See `SKILLS.md` for full conventions.
