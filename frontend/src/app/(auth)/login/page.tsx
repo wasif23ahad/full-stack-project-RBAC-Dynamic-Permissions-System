@@ -28,7 +28,7 @@ export default function LoginPage() {
       // Validate inputs
       const result = loginSchema.safeParse({ email, password });
       if (!result.success) {
-        const fieldErrors: any = {};
+        const fieldErrors: Record<string, string> = {};
         result.error.issues.forEach((err) => {
           if (err.path[0]) {
             fieldErrors[err.path[0] as string] = err.message;
@@ -45,8 +45,9 @@ export default function LoginPage() {
       // Redirect to dashboard on success
       router.push('/dashboard');
       
-    } catch (err: any) {
-      setErrors({ form: err.response?.data?.message || 'Invalid credentials or login failed.' });
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setErrors({ form: error.response?.data?.message || 'Invalid credentials or login failed.' });
       setIsLoading(false);
     }
   };

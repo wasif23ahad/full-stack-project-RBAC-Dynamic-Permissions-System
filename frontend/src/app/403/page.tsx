@@ -11,7 +11,7 @@ export default function ForbiddenPage() {
         </div>
         <h1 className="text-2xl font-bold text-neutral-900 mb-2">Access Denied</h1>
         <p className="text-neutral-500 mb-8">
-          You don't have the required permissions to view this page. If you believe this is a mistake, please contact your administrator.
+          You don&apos;t have the required permissions to view this page. If you believe this is a mistake, please contact your administrator.
         </p>
         <Link 
           href="/dashboard" 
