@@ -1,20 +1,54 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { useAuth } from '@/hooks/useAuth';
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
     setIsLoading(true);
-    // TODO: Implement actual login call in Phase 7b
-    setTimeout(() => {
+
+    try {
+      // Validate inputs
+      const result = loginSchema.safeParse({ email, password });
+      if (!result.success) {
+        const fieldErrors: any = {};
+        result.error.issues.forEach((err) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+        setIsLoading(false);
+        return;
+      }
+
+      // Perform login
+      await login({ email, password });
+      
+      // Redirect to dashboard on success
+      router.push('/dashboard');
+      
+    } catch (err: any) {
+      setErrors({ form: err.response?.data?.message || 'Invalid credentials or login failed.' });
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -38,6 +72,13 @@ export default function LoginPage() {
 
           <div className="mt-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {errors.form && (
+                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                  {errors.form}
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="email"
@@ -53,10 +94,15 @@ export default function LoginPage() {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    onChange={(e) => { setEmail(e.target.value); setErrors(prev => ({...prev, email: undefined, form: undefined})); }}
+                    className={`block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ${errors.email ? 'ring-red-500 focus:ring-red-600' : 'ring-gray-300 focus:ring-blue-600'} placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                     placeholder="Enter your email"
                   />
+                  {errors.email && (
+                    <p className="mt-1 flex text-xs text-red-500">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -75,10 +121,15 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    onChange={(e) => { setPassword(e.target.value); setErrors(prev => ({...prev, password: undefined, form: undefined})); }}
+                    className={`block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ${errors.password ? 'ring-red-500 focus:ring-red-600' : 'ring-gray-300 focus:ring-blue-600'} placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                     placeholder="••••••••"
                   />
+                  {errors.password && (
+                    <p className="mt-1 flex text-xs text-red-500">
+                      {errors.password}
+                    </p>
+                  )}
                 </div>
               </div>
               

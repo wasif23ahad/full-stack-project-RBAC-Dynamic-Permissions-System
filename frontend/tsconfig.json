@@ -21,6 +21,7 @@
       "@/*": ["./src/*"],
       "@/context/*": ["./context/*"],
       "@/lib/*": ["./lib/*"],
+      "@/hooks/*": ["./hooks/*"],
       "@/types": ["./types/index.ts"]
     }
   },
