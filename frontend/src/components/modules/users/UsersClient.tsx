@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import { usePermission } from '@/hooks/usePermission';
 import { User, Role } from '@/types';
 import CreateUserModal from './CreateUserModal';
+import PermissionEditorModal from './PermissionEditorModal';
 import { Search, Plus, UserCircle, ChevronLeft, ChevronRight, Hash, MoreVertical, Edit2, Shield, XCircle, CheckCircle, Ban } from 'lucide-react';
 
 interface PaginatedUsers {
@@ -31,6 +32,7 @@ export default function UsersClient() {
   
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [editingPermissionsUser, setEditingPermissionsUser] = useState<User | null>(null);
 
   // Check if current user can create users
   const canManageUsers = usePermission('users.manage');
@@ -124,9 +126,9 @@ export default function UsersClient() {
     alert(`Edit modal for ${user.firstName} ${user.lastName} will open here.`);
   };
 
-  const handleManagePermissions = (userId: string) => {
-    // Placeholder for Task 11 Permission Editor
-    alert(`Permission Editor for user ${userId} will open here.`);
+  const handleManagePermissions = (user: User) => {
+    setOpenDropdownId(null);
+    setEditingPermissionsUser(user);
   };
 
   // Component states
@@ -289,7 +291,7 @@ export default function UsersClient() {
                                     Edit
                                   </button>
                                 )}
-                                <button onClick={() => handleManagePermissions(user.id)} className="group flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 w-full text-left">
+                                <button onClick={() => handleManagePermissions(user)} className="group flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 w-full text-left">
                                   <Shield className="mr-3 h-4 w-4 text-neutral-400 group-hover:text-neutral-500" />
                                   Manage Permissions
                                 </button>
@@ -362,7 +364,7 @@ export default function UsersClient() {
                         <Edit2 className="mr-1.5 h-3.5 w-3.5 text-neutral-400" /> Edit
                       </button>
                     )}
-                    <button onClick={() => handleManagePermissions(user.id)} className="inline-flex items-center px-3 py-1.5 border border-neutral-200 shadow-sm text-xs font-medium rounded text-neutral-700 bg-white hover:bg-neutral-50">
+                    <button onClick={() => { setOpenDropdownId(null); handleManagePermissions(user); }} className="inline-flex items-center px-3 py-1.5 border border-neutral-200 shadow-sm text-xs font-medium rounded text-neutral-700 bg-white hover:bg-neutral-50">
                       <Shield className="mr-1.5 h-3.5 w-3.5 text-neutral-400" /> Permissions
                     </button>
                     {canManageUsers && user.status === 'ACTIVE' && (
@@ -459,6 +461,15 @@ export default function UsersClient() {
           onClose={() => setIsCreateModalOpen(false)}
           onSuccess={handleCreateSuccess}
           roles={roles}
+        />
+      )}
+
+      {/* Permission Editor Modal */}
+      {editingPermissionsUser && (
+        <PermissionEditorModal 
+          userId={editingPermissionsUser.id}
+          userName={`${editingPermissionsUser.firstName} ${editingPermissionsUser.lastName}`}
+          onClose={() => setEditingPermissionsUser(null)}
         />
       )}
     </div>
