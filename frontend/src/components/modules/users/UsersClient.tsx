@@ -5,7 +5,7 @@ import api from '@/lib/api';
 import { usePermission } from '@/hooks/usePermission';
 import { User, Role } from '@/types';
 import CreateUserModal from './CreateUserModal';
-import { Search, Plus, UserCircle, ChevronLeft, ChevronRight, Hash } from 'lucide-react';
+import { Search, Plus, UserCircle, ChevronLeft, ChevronRight, Hash, MoreVertical, Edit2, Shield, XCircle, CheckCircle, Ban } from 'lucide-react';
 
 interface PaginatedUsers {
   data: User[];
@@ -30,9 +30,17 @@ export default function UsersClient() {
   const [debounceSearch, setDebounceSearch] = useState('');
   
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Check if current user can create users
   const canManageUsers = usePermission('users.manage');
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClick = () => setOpenDropdownId(null);
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -99,6 +107,26 @@ export default function UsersClient() {
   const handleCreateSuccess = () => {
     setIsCreateModalOpen(false);
     fetchUsers(); // Refresh the list
+  };
+
+  const handleStatusChange = async (userId: string, newStatus: string) => {
+    try {
+      await api.patch(`/users/${userId}/status`, { status: newStatus });
+      fetchUsers();
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { message?: string } } };
+      alert(errorObj.response?.data?.message || 'Failed to update user status');
+    }
+  };
+
+  const handleEdit = (user: User) => {
+    // Placeholder for actual edit modal trigger
+    alert(`Edit modal for ${user.firstName} ${user.lastName} will open here.`);
+  };
+
+  const handleManagePermissions = (userId: string) => {
+    // Placeholder for Task 11 Permission Editor
+    alert(`Permission Editor for user ${userId} will open here.`);
   };
 
   // Component states
@@ -202,6 +230,9 @@ export default function UsersClient() {
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
                       Join Date
                     </th>
+                    <th scope="col" className="relative px-6 py-3">
+                      <span className="sr-only">Actions</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-neutral-200">
@@ -241,6 +272,53 @@ export default function UsersClient() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-neutral-500">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="relative inline-block text-left" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => setOpenDropdownId(openDropdownId === user.id ? null : user.id)} 
+                            className="text-neutral-400 hover:text-neutral-600 rounded-full p-1 hover:bg-neutral-100 transition-colors"
+                          >
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                          {openDropdownId === user.id && (
+                            <div className="origin-top-right absolute right-8 top-0 mt-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-30 divide-y divide-neutral-100">
+                              <div className="py-1">
+                                {canManageUsers && (
+                                  <button onClick={() => handleEdit(user)} className="group flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 w-full text-left">
+                                    <Edit2 className="mr-3 h-4 w-4 text-neutral-400 group-hover:text-neutral-500" />
+                                    Edit
+                                  </button>
+                                )}
+                                <button onClick={() => handleManagePermissions(user.id)} className="group flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 w-full text-left">
+                                  <Shield className="mr-3 h-4 w-4 text-neutral-400 group-hover:text-neutral-500" />
+                                  Manage Permissions
+                                </button>
+                              </div>
+                              {canManageUsers && (
+                                <div className="py-1">
+                                  {user.status === 'ACTIVE' ? (
+                                    <button onClick={() => handleStatusChange(user.id, 'SUSPENDED')} className="group flex items-center px-4 py-2 text-sm text-amber-600 hover:bg-neutral-100 w-full text-left">
+                                      <XCircle className="mr-3 h-4 w-4 text-amber-500" />
+                                      Suspend User
+                                    </button>
+                                  ) : (
+                                    <button onClick={() => handleStatusChange(user.id, 'ACTIVE')} className="group flex items-center px-4 py-2 text-sm text-green-600 hover:bg-neutral-100 w-full text-left">
+                                      <CheckCircle className="mr-3 h-4 w-4 text-green-500" />
+                                      Activate User
+                                    </button>
+                                  )}
+                                  {user.status !== 'BANNED' && (
+                                    <button onClick={() => handleStatusChange(user.id, 'BANNED')} className="group flex items-center px-4 py-2 text-sm text-red-600 hover:bg-neutral-100 w-full text-left">
+                                      <Ban className="mr-3 h-4 w-4 text-red-500" />
+                                      Ban User
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -275,6 +353,28 @@ export default function UsersClient() {
                       <span className="font-semibold text-neutral-700 block mb-0.5">Manager</span>
                       {user.managerId ? user.managerId.substring(0, 8) + '...' : 'None'}
                     </div>
+                  </div>
+                  
+                  {/* Mobile Actions block */}
+                  <div className="pt-2 flex flex-wrap gap-2 border-t border-neutral-100">
+                    {canManageUsers && (
+                      <button onClick={() => handleEdit(user)} className="inline-flex items-center px-3 py-1.5 border border-neutral-200 shadow-sm text-xs font-medium rounded text-neutral-700 bg-white hover:bg-neutral-50">
+                        <Edit2 className="mr-1.5 h-3.5 w-3.5 text-neutral-400" /> Edit
+                      </button>
+                    )}
+                    <button onClick={() => handleManagePermissions(user.id)} className="inline-flex items-center px-3 py-1.5 border border-neutral-200 shadow-sm text-xs font-medium rounded text-neutral-700 bg-white hover:bg-neutral-50">
+                      <Shield className="mr-1.5 h-3.5 w-3.5 text-neutral-400" /> Permissions
+                    </button>
+                    {canManageUsers && user.status === 'ACTIVE' && (
+                      <button onClick={() => handleStatusChange(user.id, 'SUSPENDED')} className="inline-flex items-center px-3 py-1.5 border border-amber-200 shadow-sm text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100">
+                        <XCircle className="mr-1.5 h-3.5 w-3.5 text-amber-500" /> Suspend
+                      </button>
+                    )}
+                    {canManageUsers && user.status !== 'ACTIVE' && (
+                      <button onClick={() => handleStatusChange(user.id, 'ACTIVE')} className="inline-flex items-center px-3 py-1.5 border border-green-200 shadow-sm text-xs font-medium rounded text-green-700 bg-green-50 hover:bg-green-100">
+                        <CheckCircle className="mr-1.5 h-3.5 w-3.5 text-green-500" /> Activate
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
