@@ -25,7 +25,7 @@ export default function TasksClient() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'TODO': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-800">To Do</span>;
-      case 'IN_PROGRESS': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">In Progress</span>;
+      case 'IN_PROGRESS': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-50 text-orange-700">In Progress</span>;
       case 'DONE': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Done</span>;
       default: return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-800">{status}</span>;
     }
@@ -56,14 +56,14 @@ export default function TasksClient() {
             </div>
             <input
               type="text"
-              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand sm:text-sm transition-shadow"
               placeholder="Search tasks..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           
-          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-lg shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0">
+          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-[10px] shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 transition-colors shrink-0">
             <Filter className="w-4 h-4 mr-2 text-neutral-400" />
             Filter
           </button>
@@ -71,7 +71,8 @@ export default function TasksClient() {
           {canManageTasks && (
             <button
               onClick={handleCreate}
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-[10px] text-white transition-colors shrink-0 shadow-brand-btn"
+              style={{ background: 'var(--brand)', border: '1.5px solid #FD5E2B' }}
             >
               <Plus className="w-4 h-4 mr-2" />
               New Task
@@ -115,7 +116,7 @@ export default function TasksClient() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                        {canManageTasks ? (
-                         <button onClick={() => handleEdit(task.id)} className="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                         <button onClick={() => handleEdit(task.id)} className="inline-flex items-center font-inter text-[13px] font-medium transition-colors" style={{ color: 'var(--brand)' }}>
                            <Edit2 className="w-4 h-4 mr-1" />
                            Edit
                          </button>

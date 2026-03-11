@@ -17,7 +17,7 @@ export default function PortalClient() {
   
   return (
     <div className="space-y-6">
-      <div className="bg-blue-600 rounded-xl shadow-lg p-8 text-white">
+      <div className="rounded-xl shadow-lg p-8 text-white" style={{ background: 'var(--brand)' }}>
         <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.firstName || 'Customer'}!</h1>
         <p className="mt-2 text-blue-100 max-w-2xl text-lg">
           This is your private portal. View your active subscriptions, track recent support requests, and manage your profile here.
@@ -32,7 +32,7 @@ export default function PortalClient() {
               <Ticket className="w-5 h-5 text-neutral-400 mr-2" />
               My Support Tickets
             </h2>
-            <button className="text-sm font-medium text-blue-600 hover:text-blue-800">
+            <button className="text-sm font-medium transition-colors" style={{ color: 'var(--brand)' }}>
               New Ticket
             </button>
           </div>

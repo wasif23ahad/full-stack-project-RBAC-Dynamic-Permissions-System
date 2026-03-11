@@ -52,7 +52,7 @@ export default function SettingsClient() {
                 <input
                   type="text"
                   required
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-brand focus:border-brand sm:text-sm"
                   value={formData.siteName}
                   onChange={(e) => setFormData({ ...formData, siteName: e.target.value })}
                 />
@@ -66,7 +66,7 @@ export default function SettingsClient() {
                   <input
                     type="email"
                     required
-                    className="w-full pl-10 px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="w-full pl-10 px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-brand focus:border-brand sm:text-sm"
                     value={formData.supportEmail}
                     onChange={(e) => setFormData({ ...formData, supportEmail: e.target.value })}
                   />
@@ -78,7 +78,7 @@ export default function SettingsClient() {
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Default Language</label>
                 <select
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-brand focus:border-brand sm:text-sm"
                   value={formData.defaultLanguage}
                   onChange={(e) => setFormData({ ...formData, defaultLanguage: e.target.value })}
                 >
@@ -91,7 +91,7 @@ export default function SettingsClient() {
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Timezone</label>
                 <select
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:ring-brand focus:border-brand sm:text-sm"
                   value={formData.timezone}
                   onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
                 >
@@ -120,8 +120,9 @@ export default function SettingsClient() {
                 type="button"
                 onClick={() => setFormData({ ...formData, mfaRequired: !formData.mfaRequired })}
                 className={`${
-                  formData.mfaRequired ? 'bg-blue-600' : 'bg-neutral-200'
-                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2`}
+                  formData.mfaRequired ? '' : 'bg-neutral-200'
+                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none`}
+                style={formData.mfaRequired ? { background: 'var(--brand)' } : {}}
               >
                 <span
                   className={`${
@@ -140,8 +141,9 @@ export default function SettingsClient() {
                 type="button"
                 onClick={() => setFormData({ ...formData, enableNotifications: !formData.enableNotifications })}
                 className={`${
-                  formData.enableNotifications ? 'bg-blue-600' : 'bg-neutral-200'
-                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2`}
+                  formData.enableNotifications ? '' : 'bg-neutral-200'
+                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none`}
+                style={formData.enableNotifications ? { background: 'var(--brand)' } : {}}
               >
                 <span
                   className={`${
@@ -173,7 +175,8 @@ export default function SettingsClient() {
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 min-w-32 transition-colors"
+            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-[10px] text-white disabled:opacity-50 min-w-32 transition-colors shadow-brand-btn"
+            style={{ background: 'var(--brand)', border: '1.5px solid #FD5E2B' }}
           >
             {saving ? 'Saving...' : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
           </button>

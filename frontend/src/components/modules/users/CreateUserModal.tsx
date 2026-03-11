@@ -116,7 +116,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`block w-full rounded-md border ${errors.firstName ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-blue-500 focus:ring-blue-500'} sm:text-sm px-3 py-2 shadow-sm`}
+                    className={`block w-full rounded-md border ${errors.firstName ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-brand focus:ring-brand'} sm:text-sm px-3 py-2 shadow-sm`}
                     placeholder="Jane"
                   />
                   {errors.firstName && <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>}
@@ -129,7 +129,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className={`block w-full rounded-md border ${errors.lastName ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-blue-500 focus:ring-blue-500'} sm:text-sm px-3 py-2 shadow-sm`}
+                    className={`block w-full rounded-md border ${errors.lastName ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-brand focus:ring-brand'} sm:text-sm px-3 py-2 shadow-sm`}
                     placeholder="Doe"
                   />
                   {errors.lastName && <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>}
@@ -143,7 +143,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`block w-full rounded-md border ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-blue-500 focus:ring-blue-500'} sm:text-sm px-3 py-2 shadow-sm`}
+                  className={`block w-full rounded-md border ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-brand focus:ring-brand'} sm:text-sm px-3 py-2 shadow-sm`}
                   placeholder="jane.doe@example.com"
                 />
                 {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
@@ -156,7 +156,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`block w-full rounded-md border ${errors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-blue-500 focus:ring-blue-500'} sm:text-sm px-3 py-2 shadow-sm`}
+                  className={`block w-full rounded-md border ${errors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-brand focus:ring-brand'} sm:text-sm px-3 py-2 shadow-sm`}
                   placeholder="Minimum 6 characters"
                 />
                 {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
@@ -168,7 +168,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                   name="roleId"
                   value={formData.roleId}
                   onChange={handleChange}
-                  className={`block w-full rounded-md border ${errors.roleId ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-blue-500 focus:ring-blue-500'} sm:text-sm px-3 py-2 shadow-sm bg-white`}
+                  className={`block w-full rounded-md border ${errors.roleId ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:border-brand focus:ring-brand'} sm:text-sm px-3 py-2 shadow-sm bg-white`}
                 >
                   <option value="" disabled>Select a role...</option>
                   {roles.length > 0 ? (
@@ -195,7 +195,8 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex w-full justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto disabled:opacity-70 disabled:cursor-not-allowed items-center transition-colors"
+                  className="inline-flex w-full justify-center rounded-[10px] px-4 py-2 text-sm font-semibold text-white shadow-brand-btn sm:w-auto disabled:opacity-70 disabled:cursor-not-allowed items-center transition-colors"
+                  style={{ background: 'var(--brand)', border: '1.5px solid #FD5E2B' }}
                 >
                   {isSubmitting ? (
                     <>
@@ -208,7 +209,7 @@ export default function CreateUserModal({ onClose, onSuccess, roles }: CreateUse
                 </button>
                 <button
                   type="button"
-                  className="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto transition-colors"
+                  className="mt-3 inline-flex w-full justify-center rounded-[10px] bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto transition-colors"
                   onClick={onClose}
                   disabled={isSubmitting}
                 >

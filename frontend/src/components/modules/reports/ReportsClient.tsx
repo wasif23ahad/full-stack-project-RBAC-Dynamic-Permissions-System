@@ -129,7 +129,7 @@ export default function ReportsClient() {
                     {report.views.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                     <button className="text-blue-600 hover:text-blue-900">
+                     <button className="font-inter text-[13px] font-medium transition-colors" style={{ color: 'var(--brand)' }}>
                        View
                      </button>
                   </td>
