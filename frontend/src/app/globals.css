@@ -1,27 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #F5F6F8;
+  --foreground: #1F232A;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Figma Brand Tokens */
+  --brand:         #FD6D3F;
+  --brand-border:  #FD5E2B;
+  --dark-text:     #1F232A;
+  --mid-text:      #404857;
+  --muted-text:    #666C79;
+  --subtle-text:   #9BA0AB;
+  --placeholder:   #A1A6B0;
+  --card-bg:       #FFFFFF;
+  --border-color:  rgba(0, 0, 0, 0.10);
+
+  /* Sidebar */
+  --sidebar-bg:      #FFFFFF;
+  --sidebar-border:  #E5E7EB;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Scrollbar styles */
+  .scrollbar-thin::-webkit-scrollbar        { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track  { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb  { background-color: #E5E7EB; border-radius: 2px; }
+
+  /* Brand button shadow */
+  .shadow-brand-btn {
+    box-shadow: 0px 0px 0px 2px rgba(0,0,0,0.06),
+                0px 4px 10px 0px rgba(242, 61, 3, 0.10),
+                0px 17px 17px 0px rgba(242, 61, 3, 0.09);
   }
 }

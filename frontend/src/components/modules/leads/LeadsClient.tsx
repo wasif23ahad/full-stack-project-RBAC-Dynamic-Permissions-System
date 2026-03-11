@@ -61,14 +61,14 @@ export default function LeadsClient() {
             </div>
             <input
               type="text"
-              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand sm:text-sm transition-shadow"
               placeholder="Search leads..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           
-          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-lg shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0">
+          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-[10px] shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 transition-colors shrink-0">
             <Filter className="w-4 h-4 mr-2 text-neutral-400" />
             Filter
           </button>
@@ -76,7 +76,8 @@ export default function LeadsClient() {
           {canManageLeads && (
             <button
               onClick={handleCreate}
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-[10px] text-white transition-colors shrink-0 shadow-brand-btn"
+              style={{ background: 'var(--brand)', border: '1.5px solid #FD5E2B' }}
             >
               <Plus className="w-4 h-4 mr-2" />
               New Lead
@@ -126,7 +127,7 @@ export default function LeadsClient() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                        {/* Actions */}
                        {canManageLeads ? (
-                         <button onClick={() => handleEdit(lead.id)} className="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                         <button onClick={() => handleEdit(lead.id)} className="inline-flex items-center font-inter text-[13px] font-medium transition-colors" style={{ color: 'var(--brand)' }}>
                            <Edit2 className="w-4 h-4 mr-1" />
                            Edit
                          </button>

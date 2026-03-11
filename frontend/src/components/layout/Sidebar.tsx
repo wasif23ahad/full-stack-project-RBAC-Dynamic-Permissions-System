@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -6,35 +8,51 @@ import * as Icons from 'lucide-react';
 
 interface SidebarProps {
   className?: string;
-  isCollapsedClass?: string;
+  collapsed?: boolean;
 }
 
-export default function Sidebar({ className = "w-64", isCollapsedClass = "" }: SidebarProps) {
+export default function Sidebar({ className = 'w-64', collapsed = false }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
 
   return (
-    <aside className={`h-screen bg-slate-900 text-slate-300 flex flex-col transition-all duration-300 ${className} ${isCollapsedClass}`}>
-      
-      {/* Sidebar Header / Logo area */}
-      <div className="h-16 flex items-center px-4 md:px-6 border-b border-white/10 shrink-0 overflow-hidden">
-        <div className="w-8 h-8 shrink-0 bg-blue-500 rounded-md flex items-center justify-center mr-3">
-          <Icons.Shield className="w-5 h-5 text-white" />
+    <aside
+      className={`h-screen flex flex-col transition-all duration-300 ${className}`}
+      style={{
+        background: 'var(--sidebar-bg)',
+        borderRight: '1px solid var(--sidebar-border)',
+      }}
+    >
+      {/* Logo / Brand */}
+      <div
+        className="h-16 flex items-center shrink-0 overflow-hidden"
+        style={{ borderBottom: '1px solid var(--sidebar-border)', padding: collapsed ? '0 14px' : '0 20px' }}
+      >
+        <div
+          className="w-9 h-9 shrink-0 flex items-center justify-center rounded-[10px]"
+          style={{ background: 'var(--brand)' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
         </div>
-        <span className="text-lg font-bold text-white tracking-wide truncate group-[.md:max-lg:w-16]:md:max-lg:hidden">RBAC Admin</span>
+        {!collapsed && (
+          <span
+            className="ml-3 font-onest font-semibold text-[16px] truncate"
+            style={{ color: 'var(--dark-text)' }}
+          >
+            RBAC Admin
+          </span>
+        )}
       </div>
 
-      {/* Navigation Links */}
-      <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1 scrollbar-thin scrollbar-thumb-slate-700">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto scrollbar-thin py-4 px-3 space-y-1">
         {NAV_ITEMS.map((item) => {
-          // Rule: Filters items using user object directly
           const hasAccess = user?.permissions?.includes(item.requiredAtom) ?? false;
-          
           if (!hasAccess) return null;
 
           const isActive = pathname.startsWith(item.href);
-          
-          // Dynamically grab the Lucide icon by name matching constants
           const iconName = item.icon as keyof typeof Icons;
           const IconComponent = (Icons[iconName] as React.ElementType) || Icons.Circle;
 
@@ -42,30 +60,67 @@ export default function Sidebar({ className = "w-64", isCollapsedClass = "" }: S
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center px-3 py-2.5 rounded-lg transition-colors group ${
-                isActive 
-                  ? 'bg-blue-600/10 text-blue-400 font-medium' 
-                  : 'hover:bg-white/5 hover:text-white'
-              }`}
+              title={collapsed ? item.label : undefined}
+              className={`flex items-center rounded-[10px] transition-all duration-150 group
+                ${collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5 gap-3'}
+                ${isActive ? '' : 'hover:bg-gray-50'}
+              `}
+              style={
+                isActive
+                  ? {
+                      background: '#FFF3EE',
+                      color: 'var(--brand)',
+                    }
+                  : { color: 'var(--mid-text)' }
+              }
             >
-              <IconComponent 
-                className={`w-5 h-5 shrink-0 ${
-                  isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-300'
-                } group-[.md:max-lg:w-16]:md:max-lg:mx-auto`} 
+              <IconComponent
+                className="w-[18px] h-[18px] shrink-0 transition-colors"
+                style={{ color: isActive ? 'var(--brand)' : 'var(--muted-text)' }}
               />
-              <span className="truncate ml-3 group-[.md:max-lg:w-16]:md:max-lg:hidden">{item.label}</span>
+              {!collapsed && (
+                <span
+                  className={`text-[14px] font-inter truncate transition-colors ${isActive ? 'font-medium' : 'font-normal group-hover:text-dark-text'}`}
+                >
+                  {item.label}
+                </span>
+              )}
+              {/* Active left accent */}
+              {isActive && !collapsed && (
+                <span
+                  className="ml-auto w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ background: 'var(--brand)' }}
+                />
+              )}
             </Link>
           );
         })}
-      </div>
-      
-      {/* Sidebar Footer (Optional decoration/meta) */}
-      <div className="p-4 border-t border-white/10 group-[.md:max-lg:w-16]:md:max-lg:hidden overflow-hidden shrink-0">
-        <div className="bg-white/5 rounded-lg p-3 text-xs text-slate-400 truncate">
-          <p className="font-medium text-slate-300 mb-1">Internal System</p>
-          <p>v1.0.0-beta</p>
+      </nav>
+
+      {/* Footer — user info */}
+      {!collapsed && (
+        <div
+          className="p-4 shrink-0"
+          style={{ borderTop: '1px solid var(--sidebar-border)' }}
+        >
+          <div className="flex items-center gap-3 px-2 py-2 rounded-[10px] bg-gray-50">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-onest font-semibold text-sm text-white"
+              style={{ background: 'var(--brand)' }}
+            >
+              {user?.firstName?.charAt(0) || 'U'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-inter font-medium text-[13px] text-dark-text truncate">
+                {user?.firstName} {user?.lastName}
+              </p>
+              <p className="font-inter text-[11px] text-subtle-text truncate">
+                {user?.role?.name || 'User'}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 }

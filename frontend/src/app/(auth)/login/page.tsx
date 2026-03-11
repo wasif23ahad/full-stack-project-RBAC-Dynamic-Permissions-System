@@ -3,21 +3,24 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  email:    z.string().email({ message: 'Please enter a valid email address' }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
+
+  const [email,        setEmail]        = useState('');
+  const [password,     setPassword]     = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe,   setRememberMe]   = useState(false);
+  const [isLoading,    setIsLoading]    = useState(false);
+  const [errors,       setErrors]       = useState<{ email?: string; password?: string; form?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,173 +28,235 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Validate inputs
       const result = loginSchema.safeParse({ email, password });
       if (!result.success) {
         const fieldErrors: Record<string, string> = {};
         result.error.issues.forEach((err) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0] as string] = err.message;
-          }
+          if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
         });
         setErrors(fieldErrors);
         setIsLoading(false);
         return;
       }
 
-      // Perform login
       await login({ email, password });
-      
-      // Redirect to dashboard on success
       router.push('/dashboard');
-      
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      setErrors({ form: error.response?.data?.message || 'Invalid credentials or login failed.' });
+      setErrors({ form: error.response?.data?.message || 'Invalid credentials. Please try again.' });
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Left side: Form */}
-      <div className="flex w-full flex-col justify-center px-4 sm:px-6 lg:flex-none lg:w-1/2 lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-96">
-          <div>
-            {/* Logo placeholder - replace with actual if provided */}
-            <div className="flex items-center gap-2 mb-8">
-               <div className="w-8 h-8 bg-blue-600 rounded-md"></div>
-               <span className="text-xl font-bold text-gray-900">RBAC System</span>
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Welcome back
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Please enter your details to sign in.
-            </p>
-          </div>
+  const clearError = (field: 'email' | 'password') =>
+    setErrors((prev) => ({ ...prev, [field]: undefined, form: undefined }));
 
-          <div className="mt-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              
+  return (
+    <div className="flex min-h-screen bg-white">
+      {/* Left side — Login Form */}
+      <div className="flex flex-1 flex-col justify-center items-center px-6 py-12 lg:px-20 xl:px-24 bg-white">
+        <div className="w-full max-w-[420px]">
+
+          {/* Card container */}
+          <div
+            className="bg-white rounded-[20px] p-10 w-full"
+            style={{
+              border: '10px solid rgba(0,0,0,0.02)',
+              boxShadow:
+                '0px 16px 34px 0px rgba(194,194,194,0.10), 0px 62px 62px 0px rgba(194,194,194,0.09), 0px 140px 84px 0px rgba(194,194,194,0.05)',
+            }}
+          >
+            {/* Heading */}
+            <div className="flex flex-col items-center gap-[2px] mb-8">
+              <h1 className="font-onest font-semibold text-[24px] leading-[32px] tracking-[-0.02em] text-dark-text text-center">
+                Login
+              </h1>
+              <p className="font-inter text-[15px] leading-[24px] text-subtle-text text-center">
+                Enter your details to continue
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-[30px]">
+
+              {/* Global error */}
               {errors.form && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
                   {errors.form}
                 </div>
               )}
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => { setEmail(e.target.value); setErrors(prev => ({...prev, email: undefined, form: undefined})); }}
-                    className={`block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ${errors.email ? 'ring-red-500 focus:ring-red-600' : 'ring-gray-300 focus:ring-blue-600'} placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
-                    placeholder="Enter your email"
-                  />
-                  {errors.email && (
-                    <p className="mt-1 flex text-xs text-red-500">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-              </div>
+              {/* Fields group */}
+              <div className="flex flex-col gap-5">
 
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="mt-2 relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value); setErrors(prev => ({...prev, password: undefined, form: undefined})); }}
-                    className={`block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ${errors.password ? 'ring-red-500 focus:ring-red-600' : 'ring-gray-300 focus:ring-blue-600'} placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
-                    placeholder="••••••••"
-                  />
-                  {errors.password && (
-                    <p className="mt-1 flex text-xs text-red-500">
-                      {errors.password}
-                    </p>
+                {/* Email */}
+                <div className="flex flex-col gap-[6px]">
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="email"
+                      className="font-inter font-medium text-[14px] leading-[20px] tracking-[-0.01em] text-mid-text"
+                    >
+                      Email
+                    </label>
+                  </div>
+                  <div
+                    className="flex items-center px-[10px] h-[46px] bg-white rounded-[12px]"
+                    style={{ border: `1px solid ${errors.email ? '#EF4444' : 'rgba(0,0,0,0.10)'}` }}
+                  >
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
+                      placeholder="example@email.com"
+                      className="flex-1 outline-none bg-transparent font-inter text-[14px] leading-[20px] tracking-[-0.01em] text-dark-text placeholder:text-placeholder"
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="font-inter text-xs text-red-500">{errors.email}</p>
                   )}
                 </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                 <div className="flex items-center">
+
+                {/* Password */}
+                <div className="flex flex-col gap-[6px]">
+                  <label
+                    htmlFor="password"
+                    className="font-inter font-medium text-[14px] leading-[20px] tracking-[-0.01em] text-mid-text"
+                  >
+                    Password
+                  </label>
+                  <div
+                    className="flex items-center gap-[10px] px-[10px] h-[46px] bg-white rounded-[12px]"
+                    style={{ border: `1px solid ${errors.password ? '#EF4444' : 'rgba(0,0,0,0.10)'}` }}
+                  >
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      value={password}
+                      onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
+                      placeholder="Enter your password"
+                      className="flex-1 outline-none bg-transparent font-inter text-[14px] leading-[20px] tracking-[-0.01em] text-dark-text placeholder:text-placeholder"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="opacity-50 hover:opacity-100 transition-opacity shrink-0"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4 text-mid-text" />
+                      ) : (
+                        <Eye className="w-4 h-4 text-mid-text" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="font-inter text-xs text-red-500">{errors.password}</p>
+                  )}
+
+                  {/* Remember me + Forgot password */}
+                  <div className="flex items-center gap-[6px] mt-1">
                     <input
                       id="remember-me"
-                      name="remember-me"
                       type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-[18px] h-[18px] rounded border border-[#E2E4E9] accent-brand cursor-pointer"
                     />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                      Remember for 30 days
+                    <label
+                      htmlFor="remember-me"
+                      className="flex-1 font-inter text-[14px] leading-[23px] text-muted-text cursor-pointer select-none"
+                    >
+                      Remember me
                     </label>
-                 </div>
-                 <div className="text-sm">
-                   <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
-                     Forgot password?
-                   </a>
-                 </div>
+                    <button
+                      type="button"
+                      className="font-inter font-medium text-[14px] leading-[16px] text-brand hover:opacity-80 transition-opacity"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    'Sign in'
-                  )}
-                </button>
-              </div>
+              {/* Submit */}
+              <button
+                id="login-submit-btn"
+                type="submit"
+                disabled={isLoading}
+                className="flex w-full items-center justify-center h-[48px] px-3 rounded-[12px] font-inter font-medium text-[14px] leading-[20px] text-white transition-opacity disabled:opacity-60 disabled:cursor-not-allowed shadow-brand-btn"
+                style={{
+                  background: '#FD6D3F',
+                  border: '2px solid #FD5E2B',
+                }}
+              >
+                {isLoading ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  'Log in'
+                )}
+              </button>
             </form>
+
+            {/* Footer */}
+            <div className="flex items-center justify-center gap-[6px] mt-8">
+              <span className="font-inter text-[14px] text-muted-text">
+                Don&apos;t have an account?
+              </span>
+              <button
+                type="button"
+                className="font-inter font-medium text-[14px] text-dark-text hover:text-brand transition-colors"
+              >
+                Sign up
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right side: Image illustration */}
-      <div className="relative hidden w-0 flex-1 lg:block bg-slate-900">
-         {/* Placeholder for the abstract background graphic seen in typical modern SaaS auth pages */}
-         <div className="absolute inset-0 h-full w-full object-cover p-12 flex flex-col justify-center">
-             <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-10 max-w-lg shadow-2xl overflow-hidden">
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-20"></div>
-                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
-                
-                <h3 className="text-2xl font-semibold text-white mb-4 relative z-10">Dynamic Role-Based Access Control</h3>
-                <p className="text-slate-300 text-sm leading-relaxed relative z-10">
-                   Manage granular permissions effortlessly across your entire organization. Build security hierarchies with atomic precision and absolute confidence.
-                </p>
-                
-                {/* Mock UI Elements matching Figma style decorations */}
-                <div className="mt-8 space-y-3 relative z-10">
-                   <div className="h-2 w-3/4 bg-white/20 rounded-full"></div>
-                   <div className="h-2 w-1/2 bg-white/20 rounded-full"></div>
-                   <div className="h-2 w-5/6 bg-white/20 rounded-full"></div>
-                </div>
-             </div>
-         </div>
+      {/* Right side — Decorative image panel */}
+      <div
+        className="hidden lg:flex flex-1 relative overflow-hidden rounded-[20px] m-10"
+        style={{
+          background: 'rgba(255,255,255,0.13)',
+          backgroundImage: 'url(/images/login-right-bg.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Orange blurred ellipse decoration */}
+        <div
+          className="absolute -top-8 -left-8 w-[200px] h-[200px] rounded-full"
+          style={{
+            background: '#FD6D3F',
+            opacity: 0.30,
+            filter: 'blur(350px)',
+          }}
+        />
+
+        {/* Overlay gradient for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent rounded-[20px]" />
+
+        {/* Branding overlay */}
+        <div className="relative z-10 flex flex-col justify-end p-10 text-white">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center shadow-brand-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <span className="font-onest font-semibold text-xl">RBAC Admin</span>
+            </div>
+            <h2 className="font-onest font-semibold text-2xl leading-tight mb-2">
+              Role-Based Access Control
+            </h2>
+            <p className="font-inter text-sm text-white/70 leading-relaxed">
+              Manage granular permissions across your organization with atomic precision.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

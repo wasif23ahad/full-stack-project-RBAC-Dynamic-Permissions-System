@@ -1,7 +1,9 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, Bell } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { NAV_ITEMS } from '@/lib/constants';
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -9,47 +11,94 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth();
+  const pathname = usePathname();
+
+  // Find active page label for the breadcrumb
+  const activeItem = NAV_ITEMS.find((item) => pathname.startsWith(item.href));
+  const pageLabel = activeItem?.label ?? 'Dashboard';
 
   return (
-    <header className="h-16 bg-white border-b border-neutral-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 relative z-10 shadow-sm">
-      <div className="flex items-center">
-        {/* Mobile menu toggle (wired in Task 8c later) */}
-        <button 
+    <header
+      className="h-16 flex items-center justify-between shrink-0 px-5 sm:px-6 lg:px-8"
+      style={{
+        background: 'var(--card-bg)',
+        borderBottom: '1px solid var(--sidebar-border)',
+      }}
+    >
+      {/* Left — mobile menu + page title */}
+      <div className="flex items-center gap-3">
+        <button
+          id="mobile-menu-btn"
           onClick={onMenuClick}
-          className="lg:hidden p-2 -ml-2 mr-2 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="lg:hidden p-2 -ml-2 rounded-[8px] transition-colors hover:bg-gray-100"
+          style={{ color: 'var(--muted-text)' }}
         >
-          <Menu className="w-6 h-6" />
+          <Menu className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-semibold text-neutral-900 hidden sm:block">
-          Welcome{user?.firstName ? `, ${user.firstName}` : ''}
-        </h1>
+
+        <div>
+          <h1
+            className="font-onest font-semibold text-[16px] leading-tight"
+            style={{ color: 'var(--dark-text)' }}
+          >
+            {pageLabel}
+          </h1>
+          {user?.firstName && (
+            <p className="font-inter text-[12px] hidden sm:block" style={{ color: 'var(--subtle-text)' }}>
+              Welcome back, {user.firstName}
+            </p>
+          )}
+        </div>
       </div>
-      
-      <div className="flex items-center space-x-4">
+
+      {/* Right — notifications + user */}
+      <div className="flex items-center gap-3">
+        {/* Bell */}
+        <button
+          className="relative p-2 rounded-[8px] transition-colors hover:bg-gray-100"
+          style={{ color: 'var(--muted-text)' }}
+          title="Notifications"
+        >
+          <Bell className="w-5 h-5" />
+        </button>
+
+        {/* Divider */}
+        <div className="w-px h-7 bg-gray-200" />
+
+        {/* User block */}
         <div className="hidden sm:flex flex-col items-end">
-          <span className="text-sm font-medium text-neutral-900">
+          <span
+            className="font-inter font-medium text-[14px]"
+            style={{ color: 'var(--dark-text)' }}
+          >
             {user?.firstName} {user?.lastName}
           </span>
-          <span className="text-xs text-neutral-500 font-medium tracking-wide">
-            {/* Display user's role */}
+          <span
+            className="font-inter text-[12px]"
+            style={{ color: 'var(--subtle-text)' }}
+          >
             {user?.role?.name || 'User'}
           </span>
         </div>
-        
-        {/* Simple Avatar */}
-        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200 shadow-sm">
-          {user?.firstName?.charAt(0) || 'U'}
+
+        {/* Avatar */}
+        <div
+          className="w-9 h-9 rounded-full flex items-center justify-center font-onest font-semibold text-[14px] text-white shrink-0 shadow-sm"
+          style={{ background: 'var(--brand)' }}
+        >
+          {user?.firstName?.charAt(0)?.toUpperCase() || 'U'}
         </div>
-        
-        <div className="w-px h-8 bg-neutral-200 mx-2"></div>
-        
+
+        {/* Logout */}
         <button
+          id="logout-btn"
           onClick={logout}
-          className="flex items-center text-sm font-medium text-neutral-500 hover:text-neutral-900 transition-colors p-2 rounded-md hover:bg-neutral-50"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[13px] font-inter font-medium transition-colors hover:bg-red-50"
+          style={{ color: 'var(--muted-text)' }}
           title="Logout"
         >
-          <LogOut className="w-5 h-5 sm:mr-2" />
-          <span className="hidden sm:inline">Logout</span>
+          <LogOut className="w-4 h-4 shrink-0" />
+          <span className="hidden sm:inline" style={{ color: '#EF4444' }}>Logout</span>
         </button>
       </div>
     </header>

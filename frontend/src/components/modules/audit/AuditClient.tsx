@@ -41,7 +41,7 @@ export default function AuditClient() {
       setError(null);
       // Constructing query string parameters. 
       // Using search as actorId or targetType for demo purposes if it looks like one.
-      const params: any = { page, limit: 15 };
+      const params: Record<string, string | number> = { page, limit: 15 };
       if (debounceSearch) {
         // Simple search mapping for now (real app would have specific field filters)
         params.targetType = debounceSearch; 
@@ -63,7 +63,7 @@ export default function AuditClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, debounceSearch]);
 
-  const formatMetadata = (metadata: any) => {
+  const formatMetadata = (metadata: unknown) => {
     if (!metadata) return '-';
     try {
       if (typeof metadata === 'string') return metadata;
@@ -77,7 +77,7 @@ export default function AuditClient() {
     if (action.includes('CREATE') || action.includes('GRANT')) return 'bg-green-100 text-green-800';
     if (action.includes('DELETE') || action.includes('REVOKE') || action.includes('BAN')) return 'bg-red-100 text-red-800';
     if (action.includes('UPDATE') || action.includes('SUSPEND')) return 'bg-amber-100 text-amber-800';
-    return 'bg-blue-100 text-blue-800';
+    return 'bg-orange-50 text-orange-700';
   };
 
   return (
@@ -97,14 +97,14 @@ export default function AuditClient() {
             </div>
             <input
               type="text"
-              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand sm:text-sm transition-shadow"
               placeholder="Filter by target type..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           
-          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-lg shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0">
+          <button className="inline-flex items-center justify-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-[10px] shadow-sm text-neutral-700 bg-white hover:bg-neutral-50 transition-colors shrink-0">
             <Filter className="w-4 h-4 mr-2 text-neutral-400" />
             Advanced
           </button>
@@ -123,9 +123,9 @@ export default function AuditClient() {
 
       <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
         {loading && logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-neutral-500">
-            <Loader2 className="animate-spin h-8 w-8 text-blue-600 mb-4" />
-            <p>Loading audit trail...</p>
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 mb-4" style={{ borderColor: 'var(--brand)' }}></div>
+            <p className="font-inter text-[14px]" style={{ color: 'var(--subtle-text)' }}>Loading audit trail...</p>
           </div>
         ) : logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-neutral-500">

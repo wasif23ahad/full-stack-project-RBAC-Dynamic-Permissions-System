@@ -163,7 +163,7 @@ export default function UsersClient() {
             </div>
             <input
               type="text"
-              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+              className="block w-full sm:w-64 pl-10 pr-3 py-2 border border-neutral-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand sm:text-sm transition-shadow"
               placeholder="Search users..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -173,7 +173,8 @@ export default function UsersClient() {
           {canManageUsers && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-[10px] text-white transition-colors shrink-0 shadow-brand-btn"
+              style={{ background: 'var(--brand)', border: '1.5px solid #FD5E2B' }}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add User
@@ -200,9 +201,9 @@ export default function UsersClient() {
       {/* Main Table / List Content */}
       <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
         {loading && users.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-neutral-500">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-            <p>Loading users...</p>
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 mb-4" style={{ borderColor: 'var(--brand)' }}></div>
+            <p className="font-inter text-[14px]" style={{ color: 'var(--subtle-text)' }}>Loading users...</p>
           </div>
         ) : users.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-neutral-500">
@@ -242,7 +243,7 @@ export default function UsersClient() {
                     <tr key={user.id} className="hover:bg-neutral-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold">
+                          <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full font-onest font-semibold text-[14px] text-white" style={{ background: 'var(--brand)' }}>
                             {user.firstName.charAt(0)}
                           </div>
                           <div className="ml-4">
@@ -333,7 +334,7 @@ export default function UsersClient() {
                 <div key={user.id} className="p-4 space-y-3 bg-white">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold">
+                      <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full font-onest font-semibold text-[14px] text-white" style={{ background: 'var(--brand)' }}>
                         {user.firstName.charAt(0)}
                       </div>
                       <div>
@@ -409,9 +410,10 @@ export default function UsersClient() {
                           onClick={() => setPage(i + 1)}
                           className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                             page === i + 1 
-                              ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' 
+                              ? 'z-10 border-brand text-white' 
                               : 'bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50'
                           }`}
+                          style={page === i + 1 ? { background: 'var(--brand)' } : {}}
                         >
                           {i + 1}
                         </button>
