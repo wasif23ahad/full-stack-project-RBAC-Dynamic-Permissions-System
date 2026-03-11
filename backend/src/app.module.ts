@@ -5,12 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     PrismaModule,
     AuthModule,
+    PermissionsModule,
   ],
   controllers: [AppController],
   providers: [
