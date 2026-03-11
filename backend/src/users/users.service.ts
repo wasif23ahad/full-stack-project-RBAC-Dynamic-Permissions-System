@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import type { Prisma } from '@prisma/client';
 import { PermissionsService } from '../permissions/permissions.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -179,7 +180,7 @@ export class UsersService {
         action: 'UPDATE_USER',
         targetType: 'User',
         targetId: id,
-        metadata: dto as Record<string, unknown>,
+        metadata: dto as unknown as Prisma.InputJsonValue,
       },
     });
 

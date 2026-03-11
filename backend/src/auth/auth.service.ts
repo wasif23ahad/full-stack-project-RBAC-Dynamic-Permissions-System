@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -18,6 +14,20 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
   ) {}
+
+  private signAccess(payload: JwtPayload): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      secret: process.env['JWT_SECRET'],
+      expiresIn: (process.env['JWT_EXPIRES_IN'] ?? '15m') as never,
+    });
+  }
+
+  private signRefresh(payload: JwtPayload): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      secret: process.env['JWT_REFRESH_SECRET'],
+      expiresIn: (process.env['JWT_REFRESH_EXPIRES_IN'] ?? '7d') as never,
+    });
+  }
 
   async login(dto: LoginDto): Promise<{
     accessToken: string;
@@ -44,15 +54,10 @@ export class AuthService {
       roleName: user.role.name,
     };
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: process.env['JWT_SECRET'],
-      expiresIn: process.env['JWT_EXPIRES_IN'] ?? '15m',
-    });
-
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env['JWT_REFRESH_SECRET'],
-      expiresIn: process.env['JWT_REFRESH_EXPIRES_IN'] ?? '7d',
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signAccess(payload),
+      this.signRefresh(payload),
+    ]);
 
     this.logger.log(`User logged in: ${user.email}`);
 
@@ -76,7 +81,7 @@ export class AuthService {
 
     let payload: JwtPayload;
     try {
-      payload = this.jwtService.verify<JwtPayload>(refreshToken, {
+      payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, {
         secret: process.env['JWT_REFRESH_SECRET'],
       });
     } catch {
@@ -99,11 +104,7 @@ export class AuthService {
       roleName: user.role.name,
     };
 
-    const accessToken = this.jwtService.sign(newPayload, {
-      secret: process.env['JWT_SECRET'],
-      expiresIn: process.env['JWT_EXPIRES_IN'] ?? '15m',
-    });
-
+    const accessToken = await this.signAccess(newPayload);
     return { accessToken };
   }
 
