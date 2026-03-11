@@ -1,6 +1,6 @@
 export const ROUTE_PERMISSION_MAP: Record<string, string> = {
   '/dashboard': 'dashboard.view',
-  '/users': 'users.manage',
+  '/users': 'users.view',
   '/roles': 'roles.manage',
   '/permissions': 'permissions.manage',
   '/audit': 'audit.view',
@@ -24,7 +24,7 @@ export const NAV_ITEMS = [
     label: 'Users',
     href: '/users',
     icon: 'Users',
-    requiredAtom: 'users.manage',
+    requiredAtom: 'users.view',
   },
   {
     label: 'Roles',
