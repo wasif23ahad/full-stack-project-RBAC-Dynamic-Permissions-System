@@ -1,0 +1,50 @@
+# compiled output
+/dist
+/build
+/node_modules
+
+# environment — never commit .env, only .env.example
+.env
+.env.local
+.env.*.local
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Prisma — local sqlite dev databases only; keep schema + migrations
+prisma/*.db
+prisma/*.db-journal
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Lint cache
+.eslintcache
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Nest.js CLI generated README (project README is in project root)
+README.md
+
+/generated/prisma
